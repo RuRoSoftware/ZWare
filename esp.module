@@ -44,4 +44,19 @@ function esp.new(Types, Model)
 	self.distance.Color = Color3.new(1, 1, 1)
 	return self
 end
+function esp:Remove()
+        self.name:Remove()
+        self.distance:Remove()
+
+	if self.box ~= nil then
+		self.box:Remove()
+        	self.outline:Remove()
+	end
+        if self.health ~= nil then
+            self.health_back:Remove()
+            self.health:Remove()
+            self.health_count:Remove()
+	end
+end
+
 return esp
