@@ -42,5 +42,6 @@ function esp.new(Types, Model)
 
 	self.name.Color = Color3.new(1, 1, 1)
 	self.distance.Color = Color3.new(1, 1, 1)
+	return self
 end
 return esp
