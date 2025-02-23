@@ -3,7 +3,6 @@ local Mouse = game.Players.LocalPlayer:GetMouse()
 local TweenService = game:GetService('TweenService')
 local InputService = game:GetService('UserInputService')
 local RunService = game:GetService('RunService')
-local UIS = game:GetService("UserInputService")
 local RenderStepped = RunService.RenderStepped
 
 local function addCorner(frame, size: UDim)
@@ -34,26 +33,23 @@ local function addListLayout(frame, size:UDim, Alignment:Enum.HorizontalAlignmen
 	UIListLayout.HorizontalAlignment = Alignment
 end
 
-function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
+function lib.new(setup: {Name:string, Player: Player})
 	local OpenedTab = nil
 	local flags = {}
-	local draggbles = {}
-	
-	local ScreenUI = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
+
+	local ScreenUI = Instance.new("ScreenGui", game.CoreGui)
 	ScreenUI.ResetOnSpawn = false
-	
+
 	local Background = Instance.new('Frame',ScreenUI)
 	Background.AnchorPoint = Vector2.new(0.5, 0.5)
 	Background.BackgroundColor3 = Color3.new(0.0666667, 0.0666667, 0.0666667)
-	Background.BorderSizePixel = 0
 	Background.Position = UDim2.new(0.5, 0, 0.5, 0)
 	Background.Size = UDim2.new(0, 576, 0, 390)
 	Background.Name = 'Background'
-	
 
-	local function MakeDraggable(Instance, Cutoff, toggle)
+	local function MakeDraggable(Instance, Cutoff)
 		Instance.Active = true
-		draggbles[Instance] = Instance.InputBegan:Connect(function(Input)
+		Instance.InputBegan:Connect(function(Input)
 			if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 				local ObjPos = Vector2.new(
 					Mouse.X - Instance.AbsolutePosition.X,
@@ -77,115 +73,17 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 			end
 		end)
 	end
-	
-	--///
-	local Watermark = Instance.new('Frame', ScreenUI)
-	Watermark.AutomaticSize = Enum.AutomaticSize.X
-	Watermark.BackgroundTransparency = 1
-	Watermark.BackgroundColor3 = Color3.new(0.0666667, 0.0666667, 0.0666667)
-	Watermark.Position = UDim2.new(0.0172413792, 0, 0.0503685698, 0)
-	Watermark.Size = UDim2.new(0, 70, 0, 21)
-	Watermark.Name = 'Watermark'
-	
-	addCorner(Watermark, UDim.new(0, 3))
-	
-	local WatermarkUIStroke = Instance.new('UIStroke',Watermark)
-	WatermarkUIStroke.ApplyStrokeMode = "Border"
-	WatermarkUIStroke.Color = Color3.new(0.164706, 0.164706, 0.164706)
-	WatermarkUIStroke.Thickness = 0
 
-	local WatermarkTitle = Instance.new('TextLabel',Watermark)
-	WatermarkTitle.AutomaticSize = Enum.AutomaticSize.X
-	WatermarkTitle.BackgroundTransparency = 1
-	WatermarkTitle.TextTransparency = 1
-	WatermarkTitle.Size = UDim2.new(0.933333397, 0, 1, 0)
-	WatermarkTitle.RichText = true
-	WatermarkTitle.FontFace = Font.fromId(12187607287, Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-	WatermarkTitle.TextSize = 16
-	WatermarkTitle.Text = '45'
-	WatermarkTitle.TextColor3 = Color3.new(1, 1, 1)
-	WatermarkTitle.TextXAlignment = Enum.TextXAlignment.Left
-
-	local UIPadding = Instance.new('UIPadding',WatermarkTitle)
-	UIPadding.Name = 'UIPadding'
-	UIPadding.PaddingLeft = UDim.new(0, 6)
-	--///
-	local Notifys = Instance.new('Frame',ScreenUI)
-	Notifys.AutomaticSize = Enum.AutomaticSize.X
-	Notifys.BackgroundTransparency = 1
-	Notifys.Position = UDim2.new(0.355044693, 0, 0.757985234, 0)
-	Notifys.Size = UDim2.new(0, 454, 0, 159)
-	Notifys.ClipsDescendants = true
-	Notifys.Name = 'Notifys'
-	
-	local NotifysTextLabel = Instance.new('TextLabel', Notifys)
-	NotifysTextLabel.BackgroundTransparency = 1
-	NotifysTextLabel.Size = UDim2.new(0, 454, 0, 20)
-	NotifysTextLabel.FontFace = Font.fromId(12187607287, Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-	NotifysTextLabel.Text = 'Announcments'
-	NotifysTextLabel.TextTransparency = 0
-	NotifysTextLabel.TextColor3 = Color3.new(1, 1, 1)
-	NotifysTextLabel.TextSize = 23
-	
-	local NotifysUIStroke = Instance.new('UIStroke', Notifys)
-	NotifysUIStroke.ApplyStrokeMode = "Border"
-	NotifysUIStroke.Color = Color3.new(0.164706, 0.164706, 0.164706)
-	NotifysUIStroke.Thickness = 2.4
-	
-	
-	--//
-	
-	local Binds = Instance.new("Frame", ScreenUI)
-	Binds.Name = "Binds"
-	Binds.BackgroundColor3 = Color3.fromRGB(17, 17, 17)
-	Binds.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	Binds.BorderSizePixel = 0
-	Binds.Position = UDim2.new(0, 10, 0, 235)
-	Binds.Size = UDim2.new(0, 133, 0, 16)
-	
-	addStroker(Binds, Color3.fromRGB(42, 42, 42), 2.4)
-	addCorner(Binds, UDim.new(0, 3))
-
-	local TextLabel = Instance.new("TextLabel", Binds)
-	TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	TextLabel.BackgroundTransparency = 1.000
-	TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	TextLabel.BorderSizePixel = 0
-	TextLabel.Size = UDim2.new(1, 0, 1, 0)
-	TextLabel.FontFace = Font.fromId(12187607287, Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-	TextLabel.Text = "Bind menu"
-	TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-	TextLabel.TextSize = 20.000
-	
-	local List = Instance.new("Frame", Binds)
-	List.Name = "List"
-	List.BackgroundColor3 = Color3.fromRGB(17, 17, 17)
-	List.BackgroundTransparency = 1
-	List.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	List.BorderSizePixel = 0
-	List.Position = UDim2.new(0, 0, 1.43749905, 0)
-	List.Size = UDim2.new(1, 0, 1.0625, 0)
-
-	addCorner(List, UDim.new(0, 3))
-
-	local UIListLayout = Instance.new("UIListLayout", List)
-	UIListLayout.Padding = UDim.new(0.2)
-	UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-	
-
-	MakeDraggable(Binds, 25)
-	MakeDraggable(Notifys, 25)
 	MakeDraggable(Background, 25)
-	MakeDraggable(Watermark, 25)
-	
+
 	local Left = Instance.new('Frame',Background)
 	Left.BackgroundColor3 = Color3.new(0.0941176, 0.0941176, 0.0941176)
 	Left.Size = UDim2.new(0, 147, 0, 390)
 	Left.Name = 'Left'
-	
+
 	addCorner(Left, UDim.new(0, 3))
 	addStroker(Left, Color3.new(0.164706, 0.164706, 0.164706), 0.6)
-	
+
 	local Title = Instance.new('TextLabel',Left)
 	Title.BackgroundTransparency = 1
 	Title.Size = UDim2.new(0, 147, 0, 50)
@@ -206,23 +104,23 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 	Tabs.Name = 'Tabs'
 	Tabs.CanvasSize = UDim2.new(0, 0, 0, 0)
 	Tabs.ScrollBarThickness = 0
-	
+
 	addPadding(Tabs, UDim.new(0, 0), UDim.new(0, 0), UDim.new(0, 0), UDim.new(0, 5))
-	
+
 	local UIGridLayout = Instance.new('UIGridLayout',Tabs)
 	UIGridLayout.CellPadding = UDim2.new(0, 0, 0, 10)
 	UIGridLayout.CellSize = UDim2.new(1, 0, 0.100000001, 0)
 	UIGridLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-	
+
 	local Right = Instance.new('Frame',Background)
 	Right.BackgroundColor3 = Color3.new(0.0823529, 0.0823529, 0.0823529)
 	Right.Position = UDim2.new(0.255208343, 0, 0.00256410264, 0)
 	Right.Size = UDim2.new(0, 429, 0, 390)
 	Right.Name = 'Right'
-	
+
 	addStroker(Right, Color3.new(0.164706, 0.164706, 0.164706), 0.6)
 	addCorner(Right, UDim.new(0, 3))
-	
+
 	--<pages_folder>
 	local pages_folder = Instance.new('Folder',Right)
 	pages_folder.Name = 'pages_folder'
@@ -236,11 +134,11 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 			Title.Text = name
 		end,
 		flags = flags,
-		
+
 		createTab = function(setup: {Name:string})
 			local page_list = {}
 			local opened_page = nil
-			
+
 			local Tab = Instance.new('TextButton',Tabs)
 			Tab.AutoButtonColor = false
 			Tab.BackgroundColor3 = Color3.new(0.0941176, 0.0941176, 0.0941176)
@@ -255,10 +153,9 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 			local Indicate = Instance.new('Frame',Tab)
 			Indicate.Position = UDim2.new(1, -3, 0, 0)
 			Indicate.BackgroundTransparency = 1
-			Indicate.BorderSizePixel = 0
 			Indicate.Size = UDim2.new(0, 2, 0, 34)
 			Indicate.Name = 'Indicate'
-			
+
 			local Pages = Instance.new('Frame',Right)
 			Pages.BackgroundColor3 = Color3.new(0.0941176, 0.0941176, 0.0941176)
 			Pages.Size = UDim2.new(0, 429, 0, 33)
@@ -270,39 +167,39 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 			UIGridLayout.CellSize = UDim2.new(0.300000012, 0, 0.800000012, 0)
 			UIGridLayout.FillDirection = Enum.FillDirection.Vertical
 			UIGridLayout.VerticalAlignment = Enum.VerticalAlignment.Center
-			
+
 			local open, close, tab_functions
-			
+
 			open = function()
 				if OpenedTab then
 					OpenedTab.close()
 				end
-				
+
 				Pages.Visible = true
-				
+
 				OpenedTab = tab_functions
-				
+
 				if opened_page then
 					opened_page.show()
 				elseif #page_list > 0 then				
 					page_list[1].open()
 				end
-				
+
 				TweenService:Create(Indicate, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
 			end
-			
+
 			close = function()
 				Pages.Visible = false
-				
+
 				for _, page in pairs(page_list) do
 					if page == opened_page then
 						page.hide()
 					end
 				end
-					
+
 				TweenService:Create(Indicate, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
 			end
-			
+
 			tab_functions = {
 				change_name = function(name)
 					Tab.Text = name
@@ -310,9 +207,9 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 				open = open,
 				close = close,
 			}
-			
+
 			Tab.MouseButton1Click:Connect(open)
-			
+
 			tab_functions.createPage = function(setup: {Name:string})
 				local page_button = Instance.new('TextButton',Pages)
 				page_button.AutoButtonColor = false
@@ -328,9 +225,8 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 				local Frame = Instance.new('Frame',page_button)
 				Frame.Position = UDim2.new(-1.06704817e-06, 0, 1, 0)
 				Frame.BackgroundTransparency = 1
-				Frame.BorderSizePixel = 0
 				Frame.Size = UDim2.new(1, 0, 0, 2)
-				
+
 				local page = Instance.new('ScrollingFrame',pages_folder)
 				page.Active = true
 				page.BackgroundTransparency = 1
@@ -343,54 +239,54 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 				page.ScrollBarImageColor3 = Color3.new(1, 1, 1)
 				page.ScrollBarThickness = 2
 				page.Visible = false
-				
+
 				local left = Instance.new('Frame',page)
 				left.AutomaticSize = Enum.AutomaticSize.Y
 				left.BackgroundTransparency = 1
 				left.Size = UDim2.new(0.5, 0, 1, 0)
 				left.Name = 'left'
-				
+
 				addPadding(left, UDim.new(0, 5), UDim.new(0, 0), UDim.new(0, 0), UDim.new(0, 5))
 				addListLayout(left, UDim.new(0, 8), Enum.HorizontalAlignment.Center, Enum.FillDirection.Vertical)
-				
+
 				local right = Instance.new('Frame',page)
 				right.AutomaticSize = Enum.AutomaticSize.Y
 				right.BackgroundTransparency = 1
 				right.Position = UDim2.new(0.5, 0, 0, 0)
 				right.Size = UDim2.new(0.5, 0, 1, 0)
 				right.Name = 'right'
-				
+
 				addPadding(right, UDim.new(0, 5), UDim.new(0, 0), UDim.new(0, 0), UDim.new(0, 5))
 				addListLayout(right, UDim.new(0, 8), Enum.HorizontalAlignment.Center, Enum.FillDirection.Vertical)
-				
+
 				local open, close, show, hide, page_functions
-				
+
 				open = function()
 					if opened_page then
 						opened_page.close()
 					end
-					
+
 					opened_page = page_functions
 					page.Visible = true
-					
+
 					TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
 				end
-				
+
 				close = function()
 					page.Visible = false
 					TweenService:Create(Frame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
 				end
-				
+
 				hide = function()
 					page.Visible = false
 				end
-				
+
 				show = function()
 					page.Visible = true
 				end
-				
+
 				page_button.MouseButton1Click:Connect(open)
-				
+
 				page_functions = {
 					open = open,
 					close = close,
@@ -398,10 +294,10 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 					show = show,
 				}
 				table.insert(page_list, page_functions)
-				
+
 				page_functions.createSector = function(setup: {Name:string, Side:string, Description:string})
 					local side = setup.Side == "left" and left or right
-					
+
 					local frame = Instance.new('Frame', side)
 					frame.AutomaticSize = Enum.AutomaticSize.Y
 					frame.BackgroundColor3 = Color3.new(0.0941176, 0.0941176, 0.0941176)
@@ -413,7 +309,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 					addStroker(frame, Color3.new(0.164706, 0.164706, 0.164706), 0.6)
 					addListLayout(frame, UDim.new(0, 5), Enum.HorizontalAlignment.Center, Enum.FillDirection.Vertical)
 					addPadding(frame, UDim.new(0, 5), UDim.new(0, 0), UDim.new(0, 0), UDim.new(0, 5))
-	
+
 					local Title = Instance.new('TextLabel',frame)
 					Title.BackgroundTransparency = 1
 					Title.Size = UDim2.new(0, 191, 0, 15)
@@ -424,9 +320,9 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 					Title.TextSize = 19
 					Title.TextWrapped = true
 					Title.TextXAlignment = Enum.TextXAlignment.Left
-					
+
 					addPadding(Title, UDim.new(0, 0), UDim.new(0, 10), UDim.new(0, 0), UDim.new(0, 0))
-					
+
 					local Describe = Instance.new('TextLabel',frame)
 					Describe.BackgroundTransparency = 1
 					Describe.Position = UDim2.new(0, 0, 0.219999999, 0)
@@ -438,7 +334,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 					Describe.TextSize = 19
 					Describe.TextWrapped = true
 					Describe.TextXAlignment = Enum.TextXAlignment.Left
-					
+
 					addPadding(Describe, UDim.new(0, 0), UDim.new(0, 10), UDim.new(0, 0), UDim.new(0, 0))
 
 					local Padding = Instance.new('Frame',frame)
@@ -446,11 +342,11 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 					Padding.Position = UDim2.new(0.0523560196, 0, 0.560606062, 0)
 					Padding.Size = UDim2.new(0, 171, 0, 1)
 					Padding.Name = 'Padding'
-					
+
 					local sector_functions
-					
+
 					sector_functions = {}
-					
+
 					sector_functions.createButton = function(setup: {Title:string, Flag: string})
 						local Button = Instance.new('Frame',frame)
 						Button.AutomaticSize = Enum.AutomaticSize.XY
@@ -468,36 +364,36 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 						TextButton.Text = setup.Title
 						TextButton.TextColor3 = Color3.new(1, 1, 1)
 						TextButton.TextSize = 19
-						
+
 						addStroker(TextButton, Color3.new(0.458824, 0.458824, 0.458824), 0.6)
 						addCorner(TextButton, UDim.new(0, 3))
-						
+
 						local event = Instance.new('BindableEvent')
 						event.Name = setup.Flag
-						
+
 						local SetTitle = function(text: string)
 							TweenService:Create(TextButton, TweenInfo.new(0.1), {TextTransparency = 1}):Play()
 							task.wait(0.1)
 							TextButton.Text = text
 							TweenService:Create(TextButton, TweenInfo.new(0.1), {TextTransparency = 0}):Play()
 						end
-						
+
 						flags[setup.Flag] = {
 							CallBack = event.Event,
 							SetTitle = SetTitle,
 						}
-						
+
 						TextButton.MouseButton1Click:Connect(function()
 							event:Fire()
 						end)
-						
+
 						return flags[setup.Flag] :: {CallBack: RBXScriptSignal}
 					end
-					
+
 					sector_functions.createToggle = function(setup: {Title:string, Flag: string})
 						local toggled = false
 						local opened_palet = nil
-						
+
 						local Toggle = Instance.new('Frame',frame)
 						Toggle.BackgroundTransparency = 1
 						Toggle.Position = UDim2.new(0.0549738221, 0, 0.627118647, 0)
@@ -512,7 +408,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 						ImageButton.ImageColor3 = Color3.new(0.156863, 0.156863, 0.156863)
 						ImageButton.ImageRectOffset = Vector2.new(312, 4)
 						ImageButton.ImageRectSize = Vector2.new(24, 24)	
-						
+
 						addStroker(ImageButton, Color3.new(0.458824, 0.458824, 0.458824), 0.6)
 						addCorner(ImageButton, UDim.new(0, 3))
 
@@ -527,7 +423,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 						Title.TextSize = 20
 						Title.TextWrapped = true
 						Title.TextXAlignment = Enum.TextXAlignment.Left
-						
+
 						--//
 						local modules = Instance.new('Frame',Toggle)
 						modules.AutomaticSize = Enum.AutomaticSize.Y
@@ -546,36 +442,36 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 
 						local event = Instance.new('BindableEvent')
 						event.Name = setup.Flag
-						
+
 						local update = function(value)
 							toggled = value
 							event:Fire(toggled)
-							
+
 							if toggled then
 								TweenService:Create(ImageButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.new(1, 1, 1)}):Play()
 							else
 								TweenService:Create(ImageButton, TweenInfo.new(0.1), {BackgroundColor3 = Color3.new(0.156863, 0.156863, 0.156863)}):Play()
 							end
 						end
-						
+
 						local SetTitle = function(text: string)
 							TweenService:Create(Title, TweenInfo.new(0.1), {TextTransparency = 1}):Play()
 							task.wait(0.1)
 							Title.Text = text
 							TweenService:Create(Title, TweenInfo.new(0.1), {TextTransparency = 0}):Play()
 						end
-						
+
 						local GetValue = function()
 							return toggled
 						end
-						
+
 						flags[setup.Flag] = {
 							CallBack = event.Event,
 							SetTitle = SetTitle,
 							GetValue = GetValue,
 							Update = update,
 						}
-						
+
 						ImageButton.MouseButton1Click:Connect(function()
 							toggled = not toggled
 							update(toggled)
@@ -583,20 +479,20 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 						ImageButton.MouseButton2Click:Connect(function()
 							modules.Visible = not modules.Visible
 						end)
-						
+
 						Mouse.Move:Connect(function()
 							local mouser_position = Vector2.new(Mouse.X, Mouse.Y)
 							local frame_position = modules.AbsolutePosition + modules.AbsoluteSize
-							
+
 							if math.abs(mouser_position.Y - frame_position.Y) - modules.AbsoluteSize.Y/2 > 120 or math.abs(mouser_position.X - frame_position.X) - modules.AbsoluteSize.X/2 > 90 then
 								modules.Visible = false
 							end
 						end)
-						
+
 						local toggle_modules = {}
-						
-						toggle_modules.createBind = function(setup: {Title:string, Flag: string, Mode: string, BindTitle: string})
-							
+
+						toggle_modules.createBind = function(setup: {Title:string, Flag: string, Mode: string})
+
 							local Bind = Instance.new('Frame',modules)
 							Bind.BackgroundTransparency = 1
 							Bind.Position = UDim2.new(0, 0, 0.0330272987, 0)
@@ -629,7 +525,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 
 							addStroker(TextButton, Color3.new(0.164706, 0.164706, 0.164706), 0.6)
 							addCorner(TextButton, UDim.new(0, 3))
-							
+
 							--//
 							local Bindmodules = Instance.new('Frame',Bind)
 							Bindmodules.AutomaticSize = Enum.AutomaticSize.Y
@@ -648,24 +544,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 							local Modes = { 'Always', 'Toggle', 'Hold', 'Off' }
 							local SelectMode = setup.Mode
 							local KeyPicker = ""
-							
-	
-							local TextLabel_2 = Instance.new("TextLabel", List)
-							TextLabel_2.Name = "KeyBinderText"
-							TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-							TextLabel_2.BorderSizePixel = 0
-							TextLabel_2.Text = setup.BindTitle
-							TextLabel_2.Visible = false
-							TextLabel_2.Size = UDim2.new(0, 133, 0, 17)
-							TextLabel_2.FontFace = Font.fromId(12187607287, Enum.FontWeight.Bold, Enum.FontStyle.Normal)
-							TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
-							TextLabel_2.TextSize = 19.000
-							TextLabel_2.Visible = false
-							TextLabel_2.BackgroundColor3 = Color3.fromRGB(17, 17, 17)
-							TextLabel_2.BackgroundTransparency = 0.450
-							TextLabel_2.TextWrapped = true
-							
-		
+
 							for Idx, Mode in next, Modes do
 								local ModeButton = {}
 
@@ -684,33 +563,30 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 										Button:Deselect()
 									end
 									SelectMode = Mode
-									
+
 									if SelectMode == "Always" then
 										toggled = true
-										TextLabel_2.Visible = true
 										update(toggled)
 									elseif SelectMode == "Off" then
 										toggled = false
-										TextLabel_2.Visible = false
 										update(toggled)	
 									end
-									
+
 									ModToggle.TextColor3 = Color3.fromRGB(102, 102, 102)
 									Bindmodules.Visible = false
 								end
-								
+
 								function ModeButton:Deselect()
 									SelectMode = nil
-									TextLabel_2.Visible = false
 									ModToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 								end
-								
+
 								ModToggle.InputBegan:Connect(function(Input)
 									if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 										ModeButton:Select()
 									end
 								end)
-								
+
 								if Mode == SelectMode then
 									ModeButton:Select()
 								end;
@@ -718,10 +594,10 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 								ModeButtons[Mode] = ModeButton;
 							end;
 
-							
+
 							local event = Instance.new('BindableEvent')
 							event.Name = setup.Flag
-							
+
 							TextButton.InputBegan:Connect(function(Input)
 								if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 									TextButton.Text = '...'
@@ -753,55 +629,45 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 									Bindmodules.Visible = not Bindmodules.Visible
 								end
 							end)
-							
+
 							InputService.InputBegan:Connect(function(input)
-								if SelectMode == "Always" then
-									TextLabel_2.Visible = true
-									return
-								elseif SelectMode == "Off" then
-									TextLabel_2.Visible = false
+								if SelectMode == "Always" or SelectMode == "Off" then
 									return
 								end
-								
+
 								if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode.Name == KeyPicker then
 									toggled = SelectMode == "Hold" and true or not toggled
-									TextLabel_2.Visible = toggled
 								elseif input.UserInputType == Enum.UserInputType.MouseButton1 and KeyPicker == "MB1" then
 									toggled = SelectMode == "Hold" and true or not toggled
-									TextLabel_2.Visible = toggled
 								elseif input.UserInputType == Enum.UserInputType.MouseButton2 and KeyPicker == "MB2" then
 									toggled = SelectMode == "Hold" and true or not toggled
-									TextLabel_2.Visible = toggled
 								elseif input.UserInputType == Enum.UserInputType.MouseButton3 and KeyPicker == "MB3" then
 									toggled = SelectMode == "Hold" and true or not toggled
-									TextLabel_2.Visible = toggled
 								else
-									TextLabel_2.Visible = false
 									return
 								end
-								
+
 								update(toggled)
 							end)
-							
+
 							InputService.InputEnded:Connect(function(input)
 								if SelectMode == "Hold" and toggled then
 									toggled = false
-									TextLabel_2.Visible = false
 									update(toggled)
 								end
 							end)
-							
+
 							local GetValue = function()
 								return {Key = KeyPicker, Mod = SelectMode}
 							end
-							
+
 							local SetValue = function(setup: {Key: string, Mod: string})
 								KeyPicker = setup.Key
 								SelectMode = setup.Mod
-								
+
 								TextButton.Text = KeyPicker or "none"
 							end
-							
+
 							flags[setup.Flag] = {
 								CallBack = event.Event,
 								SetTitle = SetTitle,
@@ -809,7 +675,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 								Update = SetValue,
 							}							
 						end
-						
+
 						toggle_modules.createColorPicker = function(setup: {Title:string, Flag: string})
 							local ColorPicker = Instance.new('Frame',modules)
 							ColorPicker.BackgroundTransparency = 1
@@ -830,13 +696,13 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 							Title.TextSize = 20
 							Title.TextWrapped = true
 							Title.TextXAlignment = Enum.TextXAlignment.Left
-							
+
 							local Frame = Instance.new('Frame',ColorPicker)
 							Frame.BackgroundTransparency = 1
 							Frame.Position = UDim2.new(0.329143375, 0, 0, 0)
 							Frame.Size = UDim2.new(0, 115, 0, 20)
 							Frame.ZIndex = 4
-							
+
 							local UIListLayout = Instance.new('UIListLayout',Frame)
 							UIListLayout.Padding = UDim.new(0, 3)
 							UIListLayout.FillDirection = Enum.FillDirection.Horizontal
@@ -844,7 +710,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 							UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 
 							local colorpicker_modules = {}
-							
+
 							colorpicker_modules.createPicker = function(setup: {Title:string, Flag: string, Color: Color3})
 								local Hue, Sat, Vib = setup.Color:ToHSV()
 								local color = Color3.fromHSV(Hue, Sat, Vib)
@@ -853,10 +719,10 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 									Vib = Vib,
 									Hue = Hue,
 								}
-								
+
 								local event = Instance.new('BindableEvent')
 								event.Name = setup.Flag
-								
+
 								local OpenTextButton = Instance.new('TextButton',Frame)
 								OpenTextButton.Size = UDim2.new(0, 17, 0, 13)
 								OpenTextButton.ZIndex = 5
@@ -872,7 +738,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 								ColorUI.ZIndex = 6
 								ColorUI.Name = 'ColorUI'
 								ColorUI.Position = UDim2.new(0, 0, 0, 25)
-								
+
 								addStroker(ColorUI, Color3.new(0.164706, 0.164706, 0.164706), 0.6)
 								addCorner(ColorUI, UDim.new(0, 3))
 
@@ -882,7 +748,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 								ImageButton.ZIndex = 6
 								ImageButton.AutoButtonColor = false
 								ImageButton.Image = 'rbxassetid://4155801252'
-								ImageButton.BackgroundColor3 =  setup.Color == Color3.new(1,1,1) and Color3.new(1, 0, 0.0156863) or color
+								ImageButton.BackgroundColor3 = setup.Color == Color3.new(1,1,1) and Color3.new(1, 0, 0.0156863) or color
 								ImageButton.BorderSizePixel = 1
 								ImageButton.BorderColor3 = Color3.fromRGB(0,0,0)
 								ImageButton.ImageColor3 = Color3.new(1, 1, 1)
@@ -896,21 +762,21 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 								TextButton.BorderSizePixel = 1
 								TextButton.BorderColor3 = Color3.fromRGB(0,0,0)
 								TextButton.Text = ''
-								
+
 								local SequenceTable = {};
 
 								for Hue = 0, 1, 0.1 do
 									table.insert(SequenceTable, ColorSequenceKeypoint.new(Hue, Color3.fromHSV(Hue, 1, 1)));
 								end;
-								
+
 								local UIGradient = Instance.new('UIGradient',TextButton)
 								UIGradient.Color = ColorSequence.new(SequenceTable)
 								UIGradient.Rotation = 90
-								
+
 								local function update(color)
 									event:Fire(color)
 								end
-								
+
 								ImageButton.InputBegan:Connect(function(Input)
 									if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 										while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
@@ -924,17 +790,17 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 
 											value.Sat = (MouseX - MinX) / (MaxX - MinX)
 											value.Vib = 1 - ((MouseY - MinY) / (MaxY - MinY))
-								
+
 											color = Color3.fromHSV(value.Hue, value.Sat, value.Vib)
 											OpenTextButton.BackgroundColor3 = color
-											
+
 											update(color)
 
 											RenderStepped:Wait()
 										end
 									end
 								end)
-								
+
 								OpenTextButton.MouseButton1Click:Connect(function()
 									if opened_palet and opened_palet ~= ColorUI then
 										opened_palet.Visible = false
@@ -942,7 +808,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 									opened_palet = ColorUI
 									ColorUI.Visible = not ColorUI.Visible						
 								end)
-								
+
 								TextButton.InputBegan:Connect(function(Input)
 									if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 										while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
@@ -953,7 +819,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 											value.Hue = ((MouseY - MinY) / (MaxY - MinY))
 											color = Color3.fromHSV(value.Hue, value.Sat, value.Vib)
 											ImageButton.BackgroundColor3 = Color3.fromHSV(value.Hue,1,1)
-											
+
 											update(color)
 
 											RenderStepped:Wait()
@@ -964,34 +830,31 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 								flags[setup.Flag] = {
 									CallBack = event.Event,
 									Update = function(Color: Color3)
-										print(Color)
-										local Hue, Sat, Vib = Color:ToHSV()
+										local Hue, Sat, Vib = setup.Color:ToHSV()
 										value = {
 											Sat = Sat,
 											Vib = Vib,
 											Hue = Hue,
 										}
-										
+
 										color = Color3.fromHSV(value.Hue, value.Sat, value.Vib)
 										ImageButton.BackgroundColor3 = Color3.fromHSV(value.Hue,1,1)
 										OpenTextButton.BackgroundColor3 = color
-										
-										update(color)
 									end,
 									GetValue = function()
 										return value
 									end,
 								}		
-	
-								
+
+
 							end
 							return colorpicker_modules
 						end
 						return toggle_modules
 					end
-					
+
 					sector_functions.createText = function(setup: {Title:string, Flag: string})
-						
+
 						local Text = Instance.new('Frame',frame)
 						Text.AutomaticSize = Enum.AutomaticSize.XY
 						Text.BackgroundTransparency = 1
@@ -1009,22 +872,22 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 						TextLabel.FontFace = Font.fromId(12187607287, Enum.FontWeight.Regular, Enum.FontStyle.Normal)
 						TextLabel.TextSize = 27
 						TextLabel.TextWrapped = true
-						
+
 						addStroker(TextLabel, Color3.new(0.458824, 0.458824, 0.458824), 0.6)
 						addCorner(TextLabel, UDim.new(0, 3))
 						addPadding(Text, UDim.new(0, 5), UDim.new(0, 0), UDim.new(0, 0), UDim.new(0, 5))
-						
+
 						local SetTitle = function(text: string)
 							TextLabel.Text = text
 						end
-						
+
 						flags[setup.Flag] = {
 							SetTitle = SetTitle,
 						}	
 					end
-					
+
 					sector_functions.createTextBox = function(setup: {Title:string, Flag: string})
-						
+
 						local TextBox = Instance.new('Frame', frame)
 						TextBox.AutomaticSize = Enum.AutomaticSize.Y
 						TextBox.BackgroundTransparency = 1
@@ -1072,19 +935,19 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 						local SetTitle = function(text: string)
 							Title.Text = text
 						end
-						
+
 						local SetValue = function(text: string)
 							TextBox.Text = text
 						end
-						
+
 						local GetValue = function()
 							return TextBox.Text
 						end
-						
+
 						TextBox.InputEnded:Connect(function()
 							event:Fire(TextBox.Text)
 						end)
-						
+
 						flags[setup.Flag] = {
 							CallBack = event.Event,
 							SetTitle = SetTitle,
@@ -1092,15 +955,15 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 							Update = SetValue,
 						}	
 					end
-					
-					sector_functions.createSlider = function(setup: {Title: string, Min: string, Default: string, Max: string, Rounding: string, Flag: string})
+
+					sector_functions.createSlider = function(setup: {Title: string, Min: string, Default: number, Max: string, Rounding: string, Flag: string})
 						local Values = {
 							Min = setup.Min,
 							Max = setup.Max,
 							Value = setup.Default,
 							Rounding = setup.Rounding,
 						}
-						
+
 						local Slider = Instance.new('Frame', frame)
 						Slider.BackgroundTransparency = 1
 						Slider.Position = UDim2.new(0.0549738221, 0, 0.627118647, 0)
@@ -1114,11 +977,11 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 						Slide.Size = UDim2.new(0.649999976, 0, 0.150000006, 0)
 						Slide.Name = 'Slide'
 						Slide.ClipsDescendants = false
-						
+
 						local fill = Instance.new("Frame", Slide)
 						fill.Transparency = 1
 						fill.Size = UDim2.new(0,0,1,0)
-						
+
 						addStroker(Slide, Color3.new(0.458824, 0.458824, 0.458824), 0.6)
 						addCorner(Slide, UDim.new(0, 16))
 
@@ -1149,7 +1012,7 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 						Title.TextSize = 20
 						Title.TextWrapped = true
 						Title.TextXAlignment = Enum.TextXAlignment.Left
-						
+
 						local event = Instance.new('BindableEvent')
 						event.Name = setup.Flag
 
@@ -1158,33 +1021,34 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 							if Values.Rounding == 0 then
 								return math.floor(Value)
 							end
-							
+
 							return tonumber(string.format('%.' .. Values.Rounding .. 'f', Value))
 						end
-						
+
 						local function MapValue(Value, MinA, MaxA, MinB, MaxB)
 							return (1 - ((Value - MinA) / (MaxA - MinA))) * MinB + ((Value - MinA) / (MaxA - MinA)) * MaxB
 						end
-						
+
 						local function GetValueFromXOffset(X)
 							return Round(MapValue(X, 0, Slide.AbsoluteSize.X, Values.Min, Values.Max))
 						end
-						
+
 						local event = Instance.new('BindableEvent')
 						event.Name = setup.Flag
-						
+
 						local X = math.ceil(MapValue(Values.Value, Values.Min, Values.Max, 0, Slide.AbsoluteSize.X))
 						fill.Size = UDim2.new(0, X, 1, 0)
 						button.Position = UDim2.new(0,fill.Size.X.Offset,0.5,0)
 
 						button.Text = Values.Value
-						
+						event:Fire(Values.Value)
+
 						button.InputBegan:Connect(function(Input)
 							if Input.UserInputType == Enum.UserInputType.MouseButton1 then
 								local mPos = Mouse.X;
 								local gPos = fill.Size.X.Offset;
 								local Diff = mPos - (fill.AbsolutePosition.X + gPos);
-								
+
 								while InputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do
 									local nMPos = Mouse.X
 									local nX = math.clamp(gPos + (nMPos - mPos) + Diff, 0, Slide.AbsoluteSize.X)
@@ -1196,9 +1060,9 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 									local X = math.ceil(MapValue(Values.Value, Values.Min, Values.Max, 0, Slide.AbsoluteSize.X))
 									fill.Size = UDim2.new(0, X, 1, 0)
 									button.Position = UDim2.new(0,fill.Size.X.Offset,0.5,0)
-									
+
 									button.Text = Values.Value
-									
+
 									if nValue ~= OldValue then
 										event:Fire(Values.Value)
 									end;
@@ -1207,14 +1071,14 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 								end
 							end
 						end)
-						
+
 						local SetTitle = function(text: string)
 							Title.Text = text
 						end
 
 						local SetValue = function(value: string)
 							Values.Value = value
-							
+
 							local X = math.ceil(MapValue(Values.Value, Values.Min, Values.Max, 0, Slide.AbsoluteSize.X))
 							fill.Size = UDim2.new(0, X, 1, 0)
 							button.Position = UDim2.new(0,fill.Size.X.Offset,0.5,0)
@@ -1226,16 +1090,16 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 						local GetValue = function()
 							return Values.Value
 						end
-						
+
 						flags[setup.Flag] = {
 							CallBack = event.Event,
 							SetTitle = SetTitle,
 							GetValue = GetValue,
 							Update = SetValue,
 						}
-						
+
 					end
-					
+
 					sector_functions.createDropBox = function(drop_setup: {Title:string, Flag: string, Multiple: boolean})
 						local active_buttons = {}
 
@@ -1451,101 +1315,13 @@ function lib.new(setup: {Name:string, MenuBind: Enum.KeyCode})
 			end
 			return tab_functions
 		end,
-		
-		
-		Notify = function(setup: {Tittle: string, Time: string})
 
-			for i,v in pairs(Notifys:GetChildren()) do
-				spawn(function()
-					if v.ClassName == "Frame" then
-						v.Position += UDim2.new(0, 0, 0, 25)
-					end
-				end)
-			end
-
-			local Notify = Instance.new('Frame',Notifys)
-			Notify.AutomaticSize = Enum.AutomaticSize.X
-			Notify.BackgroundColor3 = Color3.new(0.0666667, 0.0666667, 0.0666667)
-			Notify.Position = UDim2.new(0, -105, 0, 0)
-			Notify.Size = UDim2.new(0, 101, 0, 20)
-			Notify.Name = 'Notify'
-
-			addCorner(Notify, UDim.new(0, 3))
-
-			local NotifyUIStroke = Instance.new('UIStroke',Notify)
-			NotifyUIStroke.ApplyStrokeMode = "Border"
-			NotifyUIStroke.Color = Color3.new(0.164706, 0.164706, 0.164706)
-			NotifyUIStroke.Thickness = 2.4
-			
-			local NotifyTittle = Instance.new('TextLabel',Notify)
-			NotifyTittle.AutomaticSize = Enum.AutomaticSize.X
-			NotifyTittle.BackgroundTransparency = 1
-			NotifyTittle.Size = UDim2.new(0, 100, 0, 20)
-			NotifyTittle.Name = 'NotifyTittle'
-			NotifyTittle.FontFace = Font.fromId(12187607287, Enum.FontWeight.Regular, Enum.FontStyle.Normal)
-			NotifyTittle.Text = setup.Tittle
-			NotifyTittle.TextSize = 16
-			NotifyTittle.TextColor3 = Color3.new(1, 1, 1)
-			NotifyTittle.TextXAlignment = Enum.TextXAlignment.Left
-
-			local NotifyUIPadding = Instance.new('UIPadding',NotifyTittle)
-			NotifyUIPadding.Name = 'UIPadding'
-			NotifyUIPadding.PaddingLeft = UDim.new(0, 6)
-			
-			TweenService:Create(Notify, TweenInfo.new(0.25, Enum.EasingStyle["Linear"], Enum.EasingDirection["In"]), {Position = Notify.Position + UDim2.new(0, 108, 0, 0)}):Play();
-			
-			wait(setup.Time)
-			TweenService:Create(Notify, TweenInfo.new(0.25, Enum.EasingStyle["Linear"], Enum.EasingDirection["In"]), {BackgroundTransparency = 1}):Play();
-			TweenService:Create(NotifyTittle, TweenInfo.new(0.25, Enum.EasingStyle["Linear"], Enum.EasingDirection["In"]), {TextTransparency = 1}):Play();
-			TweenService:Create(NotifyUIStroke, TweenInfo.new(0.25, Enum.EasingStyle["Linear"], Enum.EasingDirection["In"]), {Thickness = 0}):Play();
-			wait(0.25)
-			Notify:Remove()
-	
-		end,
-
-		SetWatermark = function(setup: {Tittle: string, Visible: string})
-			TweenService:Create(Watermark, TweenInfo.new(0.25, Enum.EasingStyle["Linear"], Enum.EasingDirection["In"]), {BackgroundTransparency = setup.Visible and 0 or 1}):Play();
-			TweenService:Create(WatermarkTitle, TweenInfo.new(0.25, Enum.EasingStyle["Linear"], Enum.EasingDirection["In"]), {TextTransparency = setup.Visible and 0 or 1}):Play();
-			TweenService:Create(WatermarkUIStroke, TweenInfo.new(0.25, Enum.EasingStyle["Linear"], Enum.EasingDirection["In"]), {Thickness = setup.Visible and 2.4 or 0}):Play();
-			WatermarkTitle.Text = setup.Tittle
-		end,
-		SetKeyBind = function(setup: {Visible: string})
-			Binds.Visible = setup.Visible
-		end,
-		
-		HideMenu = function()
+		ShowHide = function()
 			Background.Visible = not Background.Visible
-			if Background.Visible then NotifysTextLabel.TextTransparency = 0 else NotifysTextLabel.TextTransparency = 1 end
-			if Background.Visible then NotifysUIStroke.Thickness = 2.4 else NotifysUIStroke.Thickness = 0 end
 		end,
-		InputService.InputBegan:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode.Name == "Insert" then
-				Background.Visible = not Background.Visible
-				
-				if Background.Visible then
-					NotifysTextLabel.TextTransparency = 0 
-				else 
-					NotifysTextLabel.TextTransparency = 1
-				end
-				
-				if Background.Visible then
-					NotifysUIStroke.Thickness = 2.4 
-				else 
-					NotifysUIStroke.Thickness = 0 
-				end
-				
-				if not Background.Visible then
-					draggbles[Notifys]:Disconnect()
-					draggbles[Binds]:Disconnect()
-				else
-					MakeDraggable(Notifys, 25)
-					MakeDraggable(Binds, 25)
-				end
-			end
-		end)
-		
-	
 	}
 	return lib_functions
+
 end
+
 return lib
